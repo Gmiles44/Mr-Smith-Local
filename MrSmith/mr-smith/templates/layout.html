@@ -13,8 +13,14 @@
     </head>
         {% block body %}{% endblock %}
     <br>
+    <a href="{{ url_for('end_day') }}">
+        <div style="position: fixed; bottom: 70px; right: 10px; z-index: 1">
+            <button class="btn btn-danger" type="submit" id="end_day">End the Day</button>
+        </div>
+    </a>
+    <br>
     <a href="{{ url_for('logout') }}">
-        <div style="position: fixed; bottom: 20px; right: 10px">
+        <div style="position: fixed; bottom: 20px; right: 10px; z-index: 1">
             <button class="btn btn-danger" type="submit" id="end_day">Logout</button>
         </div>
     </a>

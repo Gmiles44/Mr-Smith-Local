@@ -56,6 +56,19 @@ def register():
             rows = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
             session["user_id"] = rows[0]["id"]
             db.execute("INSERT INTO stats(player_id) VALUES (?)", session["user_id"])
+            global merchants
+            merchants = db.execute("""SELECT m.id, m.name, m1.id AS m1_id, m1.name AS m1_name, m1.base_price AS m1_base_price, inv_1_amt,
+                m2.id AS m2_id, m2.name AS m2_name, m2.base_price AS m2_base_price, inv_2_amt,
+                m3.id AS m3_id, m3.name AS m3_name, m3.base_price AS m3_base_price, inv_3_amt,
+                m4.id AS m4_id, m4.name AS m4_name, m4.base_price AS m4_base_price, inv_4_amt,
+                m5.id AS m5_id, m5.name AS m5_name, m5.base_price AS m5_base_price, inv_5_amt
+                FROM merchants m
+                LEFT JOIN materials m1 ON m1.id = m.inv_1
+                LEFT JOIN materials m2 ON m2.id = m.inv_2
+                LEFT JOIN materials m3 ON m3.id = m.inv_3
+                LEFT JOIN materials m4 ON m4.id = m.inv_4
+                LEFT JOIN materials m5 ON m5.id = m.inv_5 
+                WHERE level <= ? ORDER BY RANDOM() LIMIT 4""", stats['level'])
             flash("Welcome in!")
             return redirect("/stats")
 
@@ -86,6 +99,20 @@ def login():
 
         session.clear()
         session["user_id"] = rows[0]["id"]
+        stats = db.execute("SELECT * FROM stats WHERE player_id = ?", session["user_id"])[0]
+        global merchants
+        merchants = db.execute("""SELECT m.id, m.name, m1.id AS m1_id, m1.name AS m1_name, m1.base_price AS m1_base_price, inv_1_amt,
+                    m2.id AS m2_id, m2.name AS m2_name, m2.base_price AS m2_base_price, inv_2_amt,
+                    m3.id AS m3_id, m3.name AS m3_name, m3.base_price AS m3_base_price, inv_3_amt,
+                    m4.id AS m4_id, m4.name AS m4_name, m4.base_price AS m4_base_price, inv_4_amt,
+                    m5.id AS m5_id, m5.name AS m5_name, m5.base_price AS m5_base_price, inv_5_amt
+                    FROM merchants m
+                    LEFT JOIN materials m1 ON m1.id = m.inv_1
+                    LEFT JOIN materials m2 ON m2.id = m.inv_2
+                    LEFT JOIN materials m3 ON m3.id = m.inv_3
+                    LEFT JOIN materials m4 ON m4.id = m.inv_4
+                    LEFT JOIN materials m5 ON m5.id = m.inv_5 
+                    WHERE level <= ? ORDER BY RANDOM() LIMIT 4""", stats['level'])
         return redirect("/stats")
 
     else:
@@ -183,7 +210,7 @@ def inventory():
                            FROM materials m
                            JOIN materials_inventory mi
                            ON m.id = mi.mat_id
-                           AND mi.player_id = ?""", session["user_id"])
+                           AND mi.player_id = ? ORDER BY mi.amount DESC""", session["user_id"])
     c_inventory = db.execute("""SELECT name, ci.amount, base_price
                              FROM creations c
                              JOIN creations_inventory ci
@@ -196,6 +223,11 @@ def inventory():
 #MARKET MARKET MARKET MARKET MARKET
 @app.route("/market", methods=["GET", "POST"])
 def market():
+    global merchants
+    merch_keys = []
+    for merchant in merchants:
+        merch_keys.append(merchant['id'])
+    mk = tuple(merch_keys)
     merchants = db.execute("""SELECT m.id, m.name, m1.id AS m1_id, m1.name AS m1_name, m1.base_price AS m1_base_price, inv_1_amt,
                         m2.id AS m2_id, m2.name AS m2_name, m2.base_price AS m2_base_price, inv_2_amt,
                         m3.id AS m3_id, m3.name AS m3_name, m3.base_price AS m3_base_price, inv_3_amt,
@@ -206,10 +238,10 @@ def market():
                         LEFT JOIN materials m2 ON m2.id = m.inv_2
                         LEFT JOIN materials m3 ON m3.id = m.inv_3
                         LEFT JOIN materials m4 ON m4.id = m.inv_4
-                        LEFT JOIN materials m5 ON m5.id = m.inv_5""")
-    inventory = db.execute("""SELECT i.amount, c.name, c.base_price, c.id FROM creations_inventory i
-                            JOIN creations c ON c.id = i.creation_id AND i.player_id = ?""", session["user_id"])
+                        LEFT JOIN materials m5 ON m5.id = m.inv_5 WHERE m.id IN {}""".format(mk))
     stats = db.execute("SELECT * FROM stats WHERE player_id = ?", session["user_id"])[0]
+    inventory = db.execute("""SELECT i.amount, c.name, c.base_price, c.id FROM creations_inventory i
+                            JOIN creations c ON c.id = i.creation_id AND i.player_id = ? WHERE amount != 0""", session["user_id"])
 
     if request.method == "GET":
         return render_template("market.html", merchants=merchants, stats=stats, inventory=inventory)
@@ -263,6 +295,20 @@ def end_day():
                 inv_5_amt = (SELECT ABS(RANDOM() % 3) + 1)
                 WHERE id = ?""", id['id']
         )
+    global merchants
+    merchants = db.execute("""SELECT m.id, m.name, m1.id AS m1_id, m1.name AS m1_name, m1.base_price AS m1_base_price, inv_1_amt,
+                        m2.id AS m2_id, m2.name AS m2_name, m2.base_price AS m2_base_price, inv_2_amt,
+                        m3.id AS m3_id, m3.name AS m3_name, m3.base_price AS m3_base_price, inv_3_amt,
+                        m4.id AS m4_id, m4.name AS m4_name, m4.base_price AS m4_base_price, inv_4_amt,
+                        m5.id AS m5_id, m5.name AS m5_name, m5.base_price AS m5_base_price, inv_5_amt
+                        FROM merchants m
+                        LEFT JOIN materials m1 ON m1.id = m.inv_1
+                        LEFT JOIN materials m2 ON m2.id = m.inv_2
+                        LEFT JOIN materials m3 ON m3.id = m.inv_3
+                        LEFT JOIN materials m4 ON m4.id = m.inv_4
+                        LEFT JOIN materials m5 ON m5.id = m.inv_5 
+                        WHERE level <= ? ORDER BY RANDOM() LIMIT 4""", stats['level'])
+
     if stats['exp'] >= stats['next_level']:
         db.execute("UPDATE stats SET level = level + 1 WHERE player_id = ?", session["user_id"])
         db.execute("""UPDATE stats SET max_energy =
@@ -310,7 +356,7 @@ def tavern():
                 db.execute("UPDATE stats SET energy = max_energy WHERE player_id = ?", session["user_id"])
             return redirect("/end_day")
 
-        else:
+        elif request.form.get("buy"):
             id = request.form.get("buy")
             price = db.execute("SELECT price FROM food WHERE id = ?", id)[0]['price']
             if gold < price:
@@ -324,6 +370,16 @@ def tavern():
             energy = db.execute("SELECT energy FROM stats WHERE player_id = ?", session["user_id"])[0]['energy']
             if energy > max_energy:
                 db.execute("UPDATE stats set energy = max_energy WHERE player_id = ?", session["user_id"])
+            return redirect("/tavern")
+        
+        else:
+            drink_type = request.form.get("drink")
+            price = int(request.form.get("price"))
+            if gold < price:
+                flash("Barely have a pot to piss in, and I'm gonna go on a limb and say my credit's no good here.")
+            db.execute("UPDATE stats SET gold = gold - ? WHERE player_id = ?", price, session["user_id"])
+            rumor = db.execute("SELECT rumor FROM rumors WHERE type = ? ORDER BY RANDOM() LIMIT 1", drink_type)[0]['rumor']
+            flash(rumor)
             return redirect("/tavern")
 
 if __name__ == '__main__':
