@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block title %}Stats{% endblock %}
+{% block head %}
+<link href="/static/style.css" rel="stylesheet">
+{% endblock %}
+{% block body %}
+<body id="village"></body>
+    <div class="container">
+        <img src="/static/scroll.png" class="overhead">
+        <div class="centered">Stats</div>
+    </div>
+    <div class="container" id="navbutton">
+        <button class="btn btn-warning" disabled>
+            <img src="/static/home.png" style="width:30px">Home</button>
+        <a href="{{ url_for('inventory') }}" class="btn btn-secondary">
+            <img src="/static/inventory.png" style="width:30px">Inventory</a>
+        <a href="{{ url_for('craft') }}" class="btn btn-info">
+            <img src="/static/Pickaxe.png" style="width:30px">Craft</a>
+        <a href="{{ url_for('market') }}" class="btn btn-success">
+            <img src="/static/market.png" style="width:30px">Market</a>
+        <a href="{{ url_for('tavern') }}" class="btn btn-primary">
+            <img src="/static/tavern.png" style="width:30px">Tavern</a>
+            {% if get_flashed_messages() %}
+            <header style="margin: 20px auto">
+                <div class="alert alert-success mb-0 text-center" role="alert">
+                    <h2 class="alert-heading">{{ get_flashed_messages() | join(" ") }}</h2>
+                </div>
+            </header>
+            {% endif %}
+    </div>
+    <table class="table" style="width: 400px; opacity: 0.9; margin: 10px auto">
+        <thead>
+            <tr>
+                <td>Stats:</td>
+                <td>Gold</td>
+                <td>Energy</td>
+                <td>Level</td>
+                <td>Experience</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><img src="static/Coin.gif" style="height: 20px">{{ stats['gold'] }}</td>
+                <td>{{ stats['energy'] }}/{{ stats['max_energy'] }}</td>
+                <td>{{ stats['level'] }}</td>
+                <td>{{ stats['exp'] }}/{{ stats['next_level'] }}</td>
+            </tr>
+        </thead>
+    </table>
+</body>
+{% endblock %}

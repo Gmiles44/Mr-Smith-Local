@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+{% block title %}Craft{% endblock %}
+{% block head %}
+{% endblock %}
+{% block body %}
+<body id="workshop">
+    <div class="container">
+        <img src="/static/scroll.png" class="overhead">
+        <div class="centered">Crafting!</div>
+    </div>
+    <div class="container" id="navbutton">
+        <a href="{{ url_for('stats') }}" class="btn btn-warning">
+            <img src="/static/home.png" style="width:30px">Home</a>
+        <a href="{{ url_for('inventory') }}" class="btn btn-secondary">
+            <img src="/static/inventory.png" style="width:30px">Inventory</a>
+        <button class="btn btn-info" disabled>
+            <img src="/static/Pickaxe.png" style="width:30px">Craft</button>
+        <a href="{{ url_for('market') }}" class="btn btn-success">
+            <img src="/static/market.png" style="width:30px">Market</a>
+        <a href="{{ url_for('tavern') }}" class="btn btn-primary">
+            <img src="/static/tavern.png" style="width:30px">Tavern</a>
+            {% if get_flashed_messages() %}
+            <header style="margin: 20px auto">
+                <div class="alert alert-success text-center" role="alert">
+                    <h3>{{ get_flashed_messages() | join(" ") }}</h3>
+                </div>
+            </header>
+            {% endif %}
+        <table class="table" style="width: 100%; opacity: 0.9; margin: 10px auto">
+            <thead>
+                <tr>
+                    <td></td>
+                    <td>Value</td>
+                    <td>Item</td>
+                    <td>Owned</td>
+                    <td>Material</td>
+                    <td>Required</td>
+                    <td>Material</td>
+                    <td>Required</td>
+                    <td>Material</td>
+                    <td>Required</td>
+                </tr>
+                {% for recipe in recipes %}
+                {% if stats['level'] >= recipe.level %}
+                <form action="/craft" method="post">
+                    <tr>
+                        <td><button type="submit" name="id" value="{{ recipe.id }}"><img src="/static/Pickaxe.png" style="width: 25px">Craft</button></td>
+                        <td>{{ recipe.base_price }}g</td>
+                        <td>{{ recipe.name }}</td>
+                        <td>{{ recipe.owned }}</td>
+                        {% if recipe.m1_amt > recipe.i1_amt %}
+                        <td id="uncraftable">{{ recipe.m1_name }}</td>
+                        <td id="uncraftable">{{ recipe.m1_amt }}/{{ recipe.i1_amt }}</td>
+                        {% else %}
+                        <td id="craftable">{{ recipe.m1_name }}</td>
+                        <td id="craftable">{{ recipe.m1_amt }}/{{ recipe.i1_amt }}</td>
+                        {% endif %}
+                        {% if recipe.m2_name %}
+                        {% if recipe.m2_amt > recipe.i2_amt %}
+                        <td id="uncraftable">{{ recipe.m2_name }}</td>
+                        <td id="uncraftable">{{ recipe.m2_amt }}/{{ recipe.i2_amt }}</td>
+                        {% else %}
+                        <td id="craftable">{{ recipe.m2_name }}</td>
+                        <td id="craftable">{{ recipe.m2_amt }}/{{ recipe.i2_amt }}</td>
+                        {% endif %}
+                        {% endif %}
+                        {% if recipe.m3_name %}
+                        {%if recipe.m3_amt > recipe.i3_amt %}
+                        <td id="uncraftable">{{ recipe.m3_name }}</td>
+                        <td id="uncraftable">{{ recipe.m3_amt }}/{{ recipe.i3_amt }}</td>
+                        {% else %}
+                        <td id="craftable">{{ recipe.m3_name }}</td>
+                        <td id="craftable">{{ recipe.m3_amt }}/{{ recipe.i3_amt }}</td>
+                        {% endif %}
+                        {% endif %}
+                    </tr>
+                </form>
+                {% endif %}
+                {% endfor %}
+            </thead>
+        </table>
+    </form>
+    </div>
+    {% set exp_bar = (stats['exp'] / stats['next_level']) * 100 %}
+    <div class="progress" style="position: fixed; bottom: 0; text-align: center; width: 50%" role="progressbar" aria-label="Example with label" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" style="width: {{ exp_bar }}%">Exp:  {{ '%0.2f' % exp_bar|float }}%</div>
+    </div>
+    {% set energy_bar = (stats['energy'] / stats['max_energy'] * 100) %}
+    <div class="progress justify-content-end" style="position: fixed; bottom: 0; right: 0; text-align: center; width: 50%" role="progressbar" aria-label="Example with label" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar bg-success" style="width: {{ energy_bar }}%; color: black">Energy:  {{ stats['energy'] }}/{{ stats['max_energy'] }}</div>
+    </div>
+</body>
+{% endblock %}
+
+

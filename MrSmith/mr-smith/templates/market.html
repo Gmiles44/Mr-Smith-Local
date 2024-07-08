@@ -1,0 +1,153 @@
+{% extends "layout.html" %}
+{% block title %}Market{% endblock %}
+{% block head %}
+<script src="/static/functions.js"></script>
+{% endblock %}
+{% block body %}
+<body id="village">
+    <div class="container">
+        <img src="/static/scroll.png" class="overhead">
+        <div class="centered">Market</div>
+    </div>
+    <div class="container" id="navbutton">
+        <a href="{{ url_for('stats') }}" class="btn btn-warning">
+            <img src="/static/home.png" style="width:30px">Home</a>
+        <a href="{{ url_for('inventory') }}" class="btn btn-secondary">
+            <img src="/static/inventory.png" style="width:30px">Inventory</a>
+        <a href="{{ url_for('craft') }}" class="btn btn-info">
+            <img src="/static/Pickaxe.png" style="width:30px">Craft</a>
+        <button class="btn btn-success" disabled>
+            <img src="/static/market.png" style="width:30px">Market</button>
+        <a href="{{ url_for('tavern') }}" class="btn btn-primary">
+            <img src="/static/tavern.png" style="width:30px">Tavern</a>
+            {% if get_flashed_messages() %}
+            <header>
+                <div class="alert alert-danger mb-0 text-center" role="alert">
+                    <h2 class="alert-heading">{{ get_flashed_messages() | join(" ") }}</h2>
+                </div>
+            </header>
+            {% endif %}
+    </div>
+    <div>
+    <table class="table" id="gold">
+        <thead><tr id="gold"><td>Gold: {{ stats.gold }}g</td></tr></thead>
+    </table>
+    <div class="container">
+        <button class="btn btn-success" onclick="showMerchants()" style="width: 100px; font-size: 24px">Buy</button>
+        <button class="btn btn-success" onclick="showWares()" style="width: 100px; font-size: 24px">Sell</button>
+    </div>
+    <table class="container" id="merchants">
+        <tr>
+            <td id="ingredients" style="display: block">
+                <table class="table table-info" style="width: 400px; opacity: 0.9; margin: 10px auto; font-size: 32px">
+                    <thead style="align: left"><tr class="table-info"><td>Merchants</td></tr></thead></table>
+                {% for merchant in merchants %}
+                <table class="table table-info" style="width: 400px; opacity: 0.9; margin: 10px auto; font-size: 32px">
+                    <thead style="align: left"><tr class="table-info"><td>{{ merchant.name }}</td></tr></thead></table>
+                    <table class="table table-info" id="materials" style="width: 500px; opacity: 0.9; margin: 10px auto">
+                        <thead>
+                            <tr>
+                                <td>Material</td>
+                                <td>Price</td>
+                                <td>Available</td>
+                                <td>Purchase</td>
+                                <td>Total</td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><form action="/market" method="post">
+                                <input hidden name="id" value="{{ merchant.id }}">
+                                <input hidden name="m_number" value=1>
+                                <td>{{ merchant.m1_name }}</td>
+                                <td class="price">{{ merchant.m1_base_price}}g</td>
+                                <td>{{ merchant.inv_1_amt }}</td>
+                                <td><input type="number" class="qty" name="qty" placeholder="Amt" style="width: 60px" min="0" max="{{ merchant.inv_1_amt }}"></td>
+                                <td><input type="text" name="total" id="total" class="total" style="width: 60px" placeholder="Total" readonly></td>
+                                <td><button type="submit" class="buy" name="buy" value="{{ merchant.m1_id }}"><img src="/static/bag.png" style="width: 25px">Buy</button></td>
+                            </form></tr>
+                            {% if merchant.m2_name %}
+                            <tr><form action="/market" method="post">
+                                <input hidden name="m_number" value=2>
+                                <input hidden name="id" value="{{ merchant.id }}">
+                                <td>{{ merchant.m2_name }}</td>
+                                <td class="price" value="{{ merchant.m2_base_price }}">{{ merchant.m2_base_price}}g</td>
+                                <td>{{ merchant.inv_2_amt }}</td>
+                                <td><input type="number" class="qty" name="qty" placeholder="Amt" style="width: 60px" min="0" max="{{ merchant.inv_2_amt }}"></td>
+                                <td><input type="text" name="total" id="total" class="total" style="width: 60px" placeholder="Total" readonly></td>
+                                <td><button type="submit" class="buy" name="buy" value="{{ merchant.m2_id }}"><img src="/static/bag.png" style="width: 25px">Buy</button></td>
+                            </form></tr>{% endif %}
+                            {% if merchant.m3_name %}
+                            <tr><form action="/market" method="post">
+                                <input hidden name="m_number" value=3>
+                                <input hidden name="id" value="{{ merchant.id }}">
+                                <td>{{ merchant.m3_name }}</td>
+                                <td class="price"  value="{{ merchant.m3_base_price }}">{{ merchant.m3_base_price}}g</td>
+                                <td>{{ merchant.inv_3_amt }}</td>
+                                <td><input type="number" class="qty" name="qty" placeholder="Amt" style="width: 60px" min="0" max="{{ merchant.inv_3_amt }}"></td>
+                                <td><input type="text" name="total" id="total" class="total" style="width: 60px" placeholder="Total" readonly></td>
+                                <td><button type="submit" class="buy" name="buy" value="{{ merchant.m3_id }}"><img src="/static/bag.png" style="width: 25px">Buy</button></td>
+                            </form></tr>{% endif %}
+                            {% if merchant.m4_name %}
+                            <tr><form action="/market" method="post">
+                                <input hidden name="m_number" value=4>
+                                <input hidden name="id" value="{{ merchant.id }}">
+                                <td>{{ merchant.m4_name }}</td>
+                                <td class="price" value="{{ merchant.m4_base_price }}">{{ merchant.m4_base_price}}g</td>
+                                <td>{{ merchant.inv_4_amt }}</td>
+                                <td><input type="number" class="qty" name="qty" placeholder="Amt" style="width: 60px" min="0" max="{{ merchant.inv_4_amt }}"></td>
+                                <td><input type="text" name="total" id="total" class="total" style="width: 60px" placeholder="Total" readonly></td>
+                                <td><button type="submit" class="buy" name="buy" value="{{ merchant.m4_id }}"><img src="/static/bag.png" style="width: 25px">Buy</button></td>
+                            </form></tr>{% endif %}
+                            {% if merchant.m5_name %}
+                            <tr><form action="/market" method="post">
+                                <input hidden name="m_number" value=5>
+                                <input hidden name="id" value="{{ merchant.id }}">
+                                <td>{{ merchant.m5_name }}</td>
+                                <td class="price" value="{{ merchant.m5_base_price }}">{{ merchant.m5_base_price}}g</td>
+                                <td>{{ merchant.inv_5_amt }}</td>
+                                <td><input type="number" class="qty" name="qty" placeholder="Amt" style="width: 60px" min="0" max="{{ merchant.inv_5_amt }}"></td>
+                                <td><input type="text" name="total" id="total" class="total" style="width: 60px" placeholder="Total" readonly></td>
+                                <td><button type="submit" class="buy" name="buy" value="{{ merchant.m5_id }}"><img src="/static/bag.png" style="width: 25px">Buy</button></td>
+                            </form></tr>{% endif %}
+                        </tbody>
+                    </table>
+                    {% endfor %}
+                </td>
+                <td valign="top" style="margin: 10px auto" id="wares">
+                    <table class="table table-success" style="width: 400px; opacity: 0.9; margin: 10px auto; font-size: 32px">
+                        <thead style="align: left"><tr class="table-success"><td>Sell Wares</td></tr></thead></table>
+                    <table class="table table-success" style="width: 550px; opacity: 0.9; margin: 10px auto">
+                        <tbody>
+                            <tr>
+                                <td>Creation</td>
+                                <td>Value</td>
+                                <td>Available</td>
+                                <td>Sell</td>
+                                <td>Total</td>
+                                <td></td>
+                            </tr>
+                            {% for creation in inventory %}
+                            <form action="/sell" method="post"><tr>
+                                <td>{{ creation.name }}</td>
+                                <td class="price">{{ creation.base_price }}g</td>
+                                <td>{{ creation.amount }}</td>
+                                <td><input type="number" class="qty" name="qty" placeholder="Amt" style="width: 60px" min="0" max="{{ creation.amount }}"></td>
+                                <td><input type="text" name="total" id="total" class="total" style="width: 60px" placeholder="Total" readonly></td>
+                                <td><button type="submit" class="sell" name="sell" value="{{ creation.id }}" style="width: 75px"><img src="/static/bag.png" style="width: 25px">Sell</button></td>
+                            </tr></form>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </td>
+    </div>
+    {% set exp_bar = (stats['exp'] / stats['next_level']) * 100 %}
+    <div class="progress" style="position: fixed; bottom: 0; text-align: center; width: 50%" role="progressbar" aria-label="Example with label" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" style="width: {{ exp_bar }}%">Exp:  {{ '%0.2f' % exp_bar|float }}%</div>
+    </div>
+    {% set energy_bar = (stats['energy'] / stats['max_energy'] * 100) %}
+    <div class="progress justify-content-end" style="position: fixed; bottom: 0; right: 0; text-align: center; width: 50%" role="progressbar" aria-label="Example with label" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar bg-success" style="width: {{ energy_bar }}%; color: black">Energy:  {{ stats['energy'] }}/{{ stats['max_energy'] }}</div>
+    </div>
+</body
+{% endblock %}

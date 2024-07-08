@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block title %}Inventory{% endblock %}
+{% block head %}
+{% endblock %}
+{% block body %}
+<body id="village">
+    <div class="container">
+        <img src="/static/scroll.png" class="overhead">
+        <div class="centered">Inventory!</div>
+    </div>
+    <div class="container" id="navbutton">
+        <a href="{{ url_for('stats') }}" class="btn btn-warning">
+            <img src="/static/home.png" style="width:30px">Home</a>
+        <button class="btn btn-secondary" disabled>
+            <img src="/static/inventory.png" style="width:30px">Inventory</button>
+        <a href="{{ url_for('craft') }}" class="btn btn-info">
+            <img src="/static/Pickaxe.png" style="width:30px">Craft</a>
+        <a href="{{ url_for('market') }}" class="btn btn-success">
+            <img src="/static/market.png" style="width:30px">Market</a>
+        <a href="{{ url_for('tavern') }}" class="btn btn-primary">
+            <img src="/static/tavern.png" style="width:30px">Tavern</a>
+            <table class="container">
+                <tr>
+                    <td style="align: left">
+                    <table class="table" id="materials" style="width: 400px; opacity: 0.9; margin: 10px auto; font-size: 32px">
+                        <thead><tr class="table-success"><td>Materials</td></tr></thead>
+                    </table>
+                    <table class="table" id="materials" style="width: 400px; opacity: 0.9; margin: 10px auto">
+                        <thead>
+                            <tr>
+                                <td>Material</td>
+                                <td>Owned</td>
+                                <td>Base Price</td>
+                                <td>Total Value</td>
+                            </tr>
+                            {% for item in inventory %}
+                            <tr>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.amount }}</td>
+                                <td>{{ item.base_price }}g</td>
+                                <td>{{ item.base_price * item.amount }}g</td>
+                            </tr>
+                            {% endfor %}
+                        </thead>
+                    </table>
+                </td>
+                <td style="align: right">
+                    <table class="table" style="width: 400px; opacity: 0.9; margin: 10px auto; font-size: 32px">
+                        <thead><tr class="table-warning"><td>Creations</td></tr></thead>
+                        <table class="table" id="materials" style="width: 400px; opacity: 0.9; margin: 10px auto">
+                            <thead>
+                                <tr>
+                                    <td>Creation</td>
+                                    <td>Owned</td>
+                                    <td>Base Price</td>
+                                    <td>Total Value</td>
+                                </tr>
+                                {% for item in c_inventory %}
+                                <tr>
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.amount }}</td>
+                                    <td>{{ item.base_price }}g</td>
+                                    <td>{{ item.base_price * item.amount }}g</td>
+                                </tr>
+                                {% endfor %}
+                            </thead>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+    </div>
+</body>
+{% endblock %}

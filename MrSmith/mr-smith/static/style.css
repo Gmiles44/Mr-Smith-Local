@@ -1,0 +1,94 @@
+#village {
+    background-image:url('/static/Village.png');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+}
+
+#workshop {
+    background-image:url('/static/BlacksmithShop.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-color: black;
+}
+
+#navbutton {
+    position: relative;
+}
+
+.total {
+    width: 100px;
+}
+
+.buy {
+    width: 80px;
+}
+
+#gold {
+    background: linear-gradient(332deg, rgba(236,215,18,1) 0%, rgba(255,255,255,1) 55%, rgba(236,215,18,1) 100%);
+    width: 300px;
+    opacity: 0.9;
+    margin: 10px auto;
+    font-size: 20px;
+    text-align: center;
+}
+
+@font-face { font-family: AQ; src: url('AQ.ttf'); }
+#craftable {
+    background-color: #40c070;
+}
+
+#uncraftable {
+    background-color: #f07070;
+}
+#craft {
+    src: static/Pickaxe.png;
+}
+
+.centered {
+    position: absolute;
+    top: 30%;
+    right: 0;
+    left: 0;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 50px;
+    font-family: AQ;
+}
+
+.container {
+    position: relative;
+    text-align: center;
+}
+.overhead {
+    width: 400px;
+    height: 200px;
+    position: center;
+}
+
+#end_day {
+    width: 150px;
+    height: 40px;
+    font-size: 20px;
+    font-family: cursive;
+}
+
+#energy_bar {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    text-align: center;
+    width: 50%;
+    z-index: 1;
+}
+
+#experience_bar {
+    position: fixed;
+    bottom: 0;
+    text-align: center;
+    width: 50%;
+    z-index: 1;
+}

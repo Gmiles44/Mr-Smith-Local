@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+{% block title %}Tavern{% endblock %}
+{% block head %}
+<link href="/static/style.css" rel="stylesheet">
+<script src="../static/functions.js"></script>
+{% endblock %}
+{% block body %}
+<body id="village">
+    <div class="container">
+        <img src="/static/scroll.png" class="overhead">
+        <div class="centered">Tavern!</div>
+    </div>
+    <div class="container" id="navbutton">
+        <a href="{{ url_for('stats') }}" class="btn btn-warning">
+            <img src="/static/home.png" style="width:30px">Home</a>
+        <a href="{{ url_for('inventory') }}" class="btn btn-secondary">
+            <img src="/static/inventory.png" style="width:30px">Inventory</a>
+        <a href="{{ url_for('craft') }}" class="btn btn-info">
+            <img src="/static/Pickaxe.png" style="width:30px">Craft</a>
+        <a href="{{ url_for('market') }}" class="btn btn-success">
+            <img src="/static/market.png" style="width:30px">Market</a>
+        <button class="btn btn-primary" disabled>
+            <img src="/static/tavern.png" style="width:30px">Tavern</button>
+            {% if get_flashed_messages() %}
+                <header>
+                    <div class="alert alert-danger mb-0 text-center" role="alert">
+                        <h2 class="alert-heading">{{ get_flashed_messages() | join(" ") }}</h2>
+                    </div>
+                </header>
+            {% endif %}
+        <table class="table" id="gold">
+            <thead><tr id="gold"><td>Gold: {{ stats.gold }}g</td></tr></thead>
+        </table>
+            <div class="container" style="margin: 20px auto">
+                <button class="btn btn-primary" onclick="showFood()" style="width: 100px; font-size: 24px">Food</button>
+                <button class="btn btn-primary" onclick="showDrink()" style="width: 100px; font-size: 24px">Drink</button>
+                <button class="btn btn-primary" onclick="showLodging()" style="width: 120px; font-size: 24px">Lodging</button>
+            </div>
+        <table class="container">
+            <tr>
+                <td id="food" style="display: none">
+                    <table class="table table-success" style="margin: 20px auto; width: 500px">
+                        <thead>
+                            <tr>
+                                <td>Item</td>
+                                <td>Price</td>
+                                <td>Energy</td>
+                                <td></td>
+                            </tr>
+                            {% for meal in food %}
+                            <form action="/tavern" method="post">
+                                <tr>
+                                    <td>{{ meal.name }}</td>
+                                    <td name="price" value="{{ meal.price }}">{{ meal.price }}g</td>
+                                    <td name="energy" value="{{ meal.energy }}">{{ meal.energy }}</td>
+                                    <td><button type="submit" class="buy" name="buy" value="{{ meal.id }}"><img src="/static/bag.png" style="width: 25px">Buy</button></td>
+                                </tr>
+                            </form>
+                            {% endfor %}
+                        </thead>
+                    </table>
+                </td>
+                <td id="drink" style="display: none">
+                    <table class="table table-success" style="margin: 20px auto; width: 500px">
+                        <tr>
+                            <td>Drink</td>
+                            <td>Price</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Drink1</td>
+                            <td>[Amount]g</td>
+                            <td>Buy</td>
+                        </tr>
+                    </table>
+                </td>
+                <td id="lodging" style="display: none">
+                    <table class="table table-success" style="margin: 20px auto; width: 500px">
+                        <tr>
+                            <td>Room</td>
+                            <td>Price</td>
+                            <td>Recovery</td>
+                            <td></td>
+                        </tr>
+                        {% for room in lodging %}
+                        <form action="/tavern" method="post">
+                            <tr>
+                                <td>{{ room.name }}</td>
+                                <td>{{ room.price }}g</td>
+                                <td>{{ room.recovery }}%</td>
+                                <td><button type="submit" class="rent" name="rent" value="{{ room.id }}"><img src="/static/bed.png" style="width: 20px"> Rent</td>
+                            </tr>
+                        </form>
+                        {% endfor %}
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+    {% set exp_bar = (stats['exp'] / stats['next_level']) * 100 %}
+    <div class="progress" style="position: fixed; bottom: 0; text-align: center; width: 50%" role="progressbar" aria-label="Example with label" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" style="width: {{ exp_bar }}%">Exp:  {{ '%0.2f' % exp_bar|float }}%</div>
+    </div>
+    {% set energy_bar = (stats['energy'] / stats['max_energy'] * 100) %}
+    <div class="progress justify-content-end" style="position: fixed; bottom: 0; right: 0; text-align: center; width: 50%" role="progressbar" aria-label="Example with label" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar bg-success" style="width: {{ energy_bar }}%; color: black">Energy:  {{ stats['energy'] }}/{{ stats['max_energy'] }}</div>
+    </div>
+</body>
+{% endblock %}
