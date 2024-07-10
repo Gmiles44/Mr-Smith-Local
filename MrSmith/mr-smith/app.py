@@ -321,6 +321,11 @@ def end_day():
                    SELECT level FROM stats WHERE player_id = ?)) WHERE player_id = ?""", session["user_id"], session["user_id"])
         flash("Level up!")
 
+    db.execute("UPDATE stats SET day = day + 1 WHERE player_id = ?", session["user_id"])
+    day = int(stats['day'])
+    if day > 365:
+        db.execute("UPDATE stats SET day = 1 WHERE player_id = ?", session["user_id"])
+
     return redirect("/stats")
 
 #TAVERN TAVERN TAVERN TAVERN TAVERN
